@@ -85,9 +85,13 @@ O CI também verifica a sintaxe do JavaScript. Para contribuir, abra uma issue o
 
 ## Publicação no GitHub Pages
 
-O workflow `.github/workflows/pages.yml` valida o código e publica somente `dist/` em pushes para `main` ou por execução manual. Em **Settings → Pages → Source**, use **GitHub Actions**. Não são necessários segredos adicionais.
+A publicação atual usa **Settings → Pages → Deploy from a branch → gh-pages / (root)**. A branch `gh-pages` contém somente os arquivos de `dist/`, sem compilação ou segredos. A publicação tradicional está ativa porque a execução de workflows próprios do GitHub Actions está bloqueada por um problema de cobrança na conta.
 
-Para um fork, atualize o domínio e o caminho nos metadados de `index.html`, no `sitemap.xml`, no `robots.txt` e neste README. Ative Pages no seu repositório. Caminhos de scripts, estilos e áudio são relativos para funcionar em `/susto/`.
+Depois de alterar `dist/`, execute `python3 scripts/publish-pages.py` para validar e publicar a versão estática. O script clona `gh-pages` em uma pasta temporária, atualiza os arquivos e faz um push normal. Requer Git, autenticação de escrita no GitHub e Node.js. O código-fonte continua em `main`.
+
+O workflow de validação pode ser executado manualmente quando a conta liberar Actions. As verificações também funcionam localmente.
+
+Para um fork, atualize os endereços em `index.html`, `sitemap.xml`, `robots.txt` e README, e configure Pages para sua branch de publicação. Os caminhos de assets são relativos.
 
 ## Busca e compartilhamento
 

@@ -1,14 +1,8 @@
-name: Validar e publicar GitHub Pages
+name: Validar aplicativo
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
 permissions:
   contents: read
-concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -17,27 +11,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Validar arquivos e metadados
-        run: node scripts/check.mjs
-      - name: Testar detecção e atraso
-        run: node --test tests/*.test.cjs
-  deploy:
-    if: github.event_name != 'pull_request'
-    needs: validate
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: dist
-      - name: Publicar
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - run: node scripts/check.mjs
+      - run: node --test tests/*.test.cjs

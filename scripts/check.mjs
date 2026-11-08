@@ -1,0 +1,11 @@
+import {readFileSync,existsSync,readdirSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import assert from 'node:assert/strict';
+const html=readFileSync('dist/index.html','utf8');
+for(const [,path] of html.matchAll(/(?:src|href)="([^"]+)"/g))if(!/^(https?:|#)/.test(path))assert(existsSync('dist/'+path),'Referência ausente: '+path);
+for(const name of readdirSync('dist').filter(f=>f.endsWith('.js')))execFileSync(process.execPath,['--check','dist/'+name]);
+for(const meta of ['name="description"','rel="canonical"','og:image','twitter:card','application/ld+json'])assert(html.includes(meta));
+const structured=JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);assert.equal(structured.url,'https://andrewalkermo.github.io/susto/');
+for(const file of ['social-preview.png','favicon.svg','sitemap.xml','robots.txt','audio/risada-maligna.mp3'])assert(existsSync('dist/'+file));
+const app=readFileSync('dist/app.js','utf8');for(const [,path] of app.matchAll(/url:'(audio\/[^']+)'/g))assert(existsSync('dist/'+path));
+console.log('OK: JavaScript, referências, áudios e metadados');
